@@ -1,0 +1,943 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Brand colors (Green theme for Dark Mode) */
+  --brand-50: #f0fdf4;
+  --brand-100: #dcfce7;
+  --brand-200: #bbf7d0;
+  --brand-300: #86efac;
+  --brand-400: #4ade80;
+  --brand-500: #22c55e;
+  /* Primary Green */
+  --brand-600: #22c55e;
+  /* Primary Green */
+  --brand-700: #16a34a;
+  /* Hover Green */
+  --brand-800: #15803d;
+  /* Active Green */
+  --brand-900: #14532d;
+  --brand-950: #052e16;
+
+  /* Inverted slate colors for Dark Theme */
+  --dark-50: #f8fafc;
+  --dark-100: #f1f5f9;
+  --dark-200: #e2e8f0;
+  --dark-300: #cbd5e1;
+  --dark-400: #94a3b8;
+  --dark-500: #64748b;
+  --dark-600: #475569;
+  --dark-700: #334155;
+  --dark-800: #1e293b;
+  --dark-900: #081225;
+  /* Sidebar Background: #081225 */
+  --dark-950: #020617;
+  /* Main Background: #020617 */
+
+  --bg-gradient-1: rgba(34, 197, 94, 0.04);
+  /* Green gradient */
+  --bg-gradient-2: rgba(30, 41, 59, 0.4);
+  --bg-gradient-3: rgba(15, 23, 42, 0.95);
+
+  --white-override: #ffffff;
+  --border-override: rgba(255, 255, 255, 0.05);
+  --divide-override: rgba(255, 255, 255, 0.05);
+  --hover-override: rgba(255, 255, 255, 0.02);
+  --glass-panel-bg: rgba(30, 41, 59, 0.45);
+  --glass-input-bg: rgba(15, 23, 42, 0.6);
+  --glass-input-border: rgba(255, 255, 255, 0.1);
+  --glass-input-focus-bg: rgba(15, 23, 42, 0.85);
+
+  /* Badges & Severity Colors in Dark Mode */
+  --badge-red-bg: rgba(127, 29, 29, 0.5);
+  --badge-red-text: #f87171;
+  --badge-red-border: rgba(127, 29, 29, 0.3);
+
+  --badge-orange-bg: rgba(124, 45, 18, 0.5);
+  --badge-orange-text: #fb923c;
+  --badge-orange-border: rgba(124, 45, 18, 0.3);
+
+  --badge-yellow-bg: rgba(113, 63, 18, 0.5);
+  --badge-yellow-text: #facc15;
+  --badge-yellow-border: rgba(113, 63, 18, 0.3);
+
+  --badge-blue-bg: rgba(6, 78, 59, 0.5);
+  --badge-blue-text: #34d399;
+  --badge-blue-border: rgba(6, 78, 59, 0.3);
+
+  --badge-emerald-bg: rgba(6, 78, 59, 0.5);
+  --badge-emerald-text: #34d399;
+  --badge-emerald-border: rgba(6, 78, 59, 0.3);
+}
+
+html.light {
+  /* Brand colors (Royal Blue theme for Light Mode) */
+  --brand-50: #eff6ff;
+  --brand-100: #dbeafe;
+  /* Light Hover Blue: #DBEAFE */
+  --brand-200: #bfdbfe;
+  --brand-300: #93c5fd;
+  --brand-400: #60a5fa;
+  --brand-500: #3b82f6;
+  /* Hover Blue: #3B82F6 */
+  --brand-600: #2563eb;
+  /* Primary Blue: #2563EB */
+  --brand-700: #1d4ed8;
+  /* Active Hover: #1D4ED8 */
+  --brand-800: #1e40af;
+  --brand-900: #1e3a8a;
+  --brand-950: #172554;
+
+  /* Inverted slate colors for Clean White Theme globally */
+  --dark-50: #111827;
+  /* Main Headings: #111827 */
+  --dark-100: #111827;
+  /* Main Headings: #111827 */
+  --dark-200: #374151;
+  /* Normal Text: #374151 */
+  --dark-300: #6b7280;
+  /* Secondary Text: #6B7280 */
+  --dark-400: #6b7280;
+  /* Secondary Text: #6B7280 */
+  --dark-500: #9ca3af;
+  --dark-600: #6b7280;
+  --dark-700: #4b5563;
+  --dark-800: #e5e7eb;
+  /* Border: #E5E7EB */
+  --dark-900: #ffffff;
+  /* Secondary Background: #FFFFFF */
+  --dark-950: #ffffff;
+  /* Main Page Background: #FFFFFF */
+
+  --bg-gradient-1: rgba(37, 99, 235, 0.01);
+  --bg-gradient-2: rgba(248, 250, 252, 0.6);
+  --bg-gradient-3: #ffffff;
+
+  --white-override: #111827;
+  /* text-white titles -> black text */
+  --border-override: #e5e7eb;
+  /* Border: #E5E7EB */
+  --divide-override: #e5e7eb;
+  --hover-override: #dbeafe;
+  /* Hover Blue: #DBEAFE */
+  --glass-panel-bg: #ffffff;
+  /* Card Background: #FFFFFF */
+  --glass-input-bg: #ffffff;
+  --glass-input-border: #e5e7eb;
+  --glass-input-focus-bg: #ffffff;
+
+  /* Badges & Severity Colors */
+  --badge-red-bg: #fee2e2;
+  --badge-red-text: #991b1b;
+  --badge-red-border: #fca5a5;
+
+  --badge-orange-bg: #ffedd5;
+  --badge-orange-text: #9a3412;
+  --badge-orange-border: #fed7aa;
+
+  --badge-yellow-bg: #fef9c3;
+  --badge-yellow-text: #854d0e;
+  --badge-yellow-border: #fef08a;
+
+  --badge-blue-bg: #dbeafe;
+  --badge-blue-text: #1e40af;
+  --badge-blue-border: #bfdbfe;
+
+  --badge-emerald-bg: #dbeafe;
+  --badge-emerald-text: #1e40af;
+  --badge-emerald-border: #bfdbfe;
+}
+
+@layer base {
+  body {
+    @apply bg-dark-950 text-dark-100 font-sans antialiased overflow-x-hidden;
+    background-image:
+      radial-gradient(at 0% 0%, var(--bg-gradient-1) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, var(--bg-gradient-2) 0px, transparent 50%),
+      radial-gradient(at 50% 50%, var(--bg-gradient-3) 0px, transparent 100%) !important;
+    background-attachment: fixed;
+    transition: background-color 300ms ease, color 300ms ease, border-color 300ms ease;
+  }
+}
+
+/* Theme Smooth Transitions */
+body,
+nav,
+div,
+p,
+span,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+table,
+tr,
+td,
+th,
+input,
+select,
+textarea,
+button,
+a {
+  transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease, box-shadow 200ms ease;
+}
+
+/* Premium UI Glassmorphism Utility */
+.glass-panel {
+  background: var(--glass-panel-bg) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid var(--border-override) !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03) !important;
+}
+
+.glass-panel-hover {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-panel-hover:hover {
+  background: var(--glass-panel-bg) !important;
+  border: 1px solid var(--brand-600) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.06) !important;
+}
+
+.glass-input {
+  background: var(--glass-input-bg) !important;
+  border: 1px solid var(--glass-input-border) !important;
+  color: var(--dark-100) !important;
+  transition: all 0.2s ease-in-out;
+}
+
+.glass-input:focus {
+  outline: none !important;
+  border-color: var(--brand-600) !important;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15) !important;
+  background: var(--glass-input-focus-bg) !important;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--dark-900);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--dark-800);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--brand-600);
+}
+
+/* Keyframes & custom CSS utilities */
+.animate-delay-100 {
+  animation-delay: 100ms;
+}
+
+.animate-delay-200 {
+  animation-delay: 200ms;
+}
+
+.animate-delay-300 {
+  animation-delay: 300ms;
+}
+
+/* Dashboard Cards Glowing Effect */
+.glow-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.glow-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(to right,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.03) 50%,
+      rgba(255, 255, 255, 0) 100%);
+  transform: skewX(-25deg);
+  transition: 0.75s;
+  opacity: 0;
+}
+
+.glow-card:hover::after {
+  left: 125%;
+  opacity: 1;
+}
+
+/* Overrides for Hardcoded Properties in Light Mode */
+.light .text-white,
+.light h1,
+.light h2,
+.light h3,
+.light h4,
+.light h5,
+.light h6 {
+  color: var(--white-override) !important;
+}
+
+/* Ensure buttons and elements with solid background colors retain white text */
+.light button .text-white,
+.light button.text-white,
+.light button span,
+.light a.text-white,
+.light a.bg-brand-600,
+.light button.bg-brand-600,
+.light button.bg-brand-700,
+.light .bg-brand-600 .text-white,
+.light .bg-brand-700 .text-white,
+.light .bg-brand-800 .text-white,
+.light .bg-brand-600,
+.light .bg-brand-700,
+.light .bg-brand-850,
+.light .bg-red-650,
+.light .bg-red-700,
+.light .bg-red-800,
+.light .bg-red-950,
+.light .bg-emerald-950\/60,
+.light .bg-yellow-950\/60,
+.light .bg-orange-950\/50,
+.light .bg-yellow-950\/50,
+.light .bg-red-950\/50,
+.light .bg-blue-950\/50,
+.light .text-red-400,
+.light .text-orange-400,
+.light .text-yellow-400,
+.light .text-blue-400,
+.light .text-emerald-400,
+.light .text-brand-400 {
+  /* color styles are explicitly handled by badges/buttons */
+}
+
+/* Button override to preserve light contrast button text */
+.light .bg-brand-600 text-white,
+.light .bg-brand-700 text-white,
+.light button[type="submit"] {
+  color: #ffffff !important;
+}
+
+/* Specific Badge colors mapping in light mode */
+.light .bg-red-950\/50 {
+  background-color: var(--badge-red-bg) !important;
+  color: var(--badge-red-text) !important;
+  border-color: var(--badge-red-border) !important;
+}
+
+.light .text-red-400 {
+  color: var(--badge-red-text) !important;
+}
+
+.light .border-red-900\/30 {
+  border-color: var(--badge-red-border) !important;
+}
+
+.light .bg-orange-950\/50 {
+  background-color: var(--badge-orange-bg) !important;
+  color: var(--badge-orange-text) !important;
+  border-color: var(--badge-orange-border) !important;
+}
+
+.light .text-orange-400 {
+  color: var(--badge-orange-text) !important;
+}
+
+.light .border-orange-900\/30 {
+  border-color: var(--badge-orange-border) !important;
+}
+
+.light .bg-yellow-950\/50,
+.light .bg-yellow-950\/60 {
+  background-color: var(--badge-yellow-bg) !important;
+  color: var(--badge-yellow-text) !important;
+  border-color: var(--badge-yellow-border) !important;
+}
+
+.light .text-yellow-400 {
+  color: var(--badge-yellow-text) !important;
+}
+
+.light .border-yellow-900\/30 {
+  border-color: var(--badge-yellow-border) !important;
+}
+
+.light .bg-blue-950\/50 {
+  background-color: var(--badge-blue-bg) !important;
+  color: var(--badge-blue-text) !important;
+  border-color: var(--badge-blue-border) !important;
+}
+
+.light .text-blue-400 {
+  color: var(--badge-blue-text) !important;
+}
+
+.light .border-blue-900\/30 {
+  border-color: var(--badge-blue-border) !important;
+}
+
+/* Override all emerald green utility classes in light mode to blue */
+.light .bg-emerald-950\/60,
+.light .bg-emerald-950\/20,
+.light .bg-emerald-950\/50,
+.light .bg-emerald-950 {
+  background-color: var(--badge-blue-bg) !important;
+  color: var(--badge-blue-text) !important;
+  border-color: var(--badge-blue-border) !important;
+}
+
+.light .text-emerald-400,
+.light .text-emerald-500 {
+  color: var(--badge-blue-text) !important;
+}
+
+.light .border-emerald-900\/20,
+.light .border-emerald-900\/30,
+.light .border-emerald-500\/40 {
+  border-color: var(--badge-blue-border) !important;
+}
+
+.light .to-emerald-400 {
+  --tw-gradient-to: var(--brand-400) !important;
+}
+
+.light .bg-brand-950\/60,
+.light .bg-brand-950\/40,
+.light .bg-brand-950\/30,
+.light .bg-brand-950 {
+  background-color: var(--brand-100) !important;
+  color: var(--brand-600) !important;
+}
+
+.light .text-brand-400 {
+  color: var(--brand-600) !important;
+}
+
+.light .border-brand-900\/20,
+.light .border-brand-900\/30 {
+  border-color: var(--brand-200) !important;
+}
+
+/* Override all dark blue transparent backgrounds/borders in light mode to light blue */
+.light .bg-blue-950\/20,
+.light .bg-blue-950\/30,
+.light .bg-blue-950 {
+  background-color: var(--badge-blue-bg) !important;
+  color: var(--badge-blue-text) !important;
+  border-color: var(--badge-blue-border) !important;
+}
+
+.light .border-blue-900\/20,
+.light .border-blue-900\/30 {
+  border-color: var(--badge-blue-border) !important;
+}
+
+/* Light Mode borders and divide overlays */
+.light .border-white\/5 {
+  border-color: var(--border-override) !important;
+}
+
+.light .divide-white\/5> :not([hidden])~ :not([hidden]) {
+  border-color: var(--divide-override) !important;
+}
+
+.light .hover\:bg-white\/\[0\.01\]:hover {
+  background-color: var(--hover-override) !important;
+}
+
+.light .bg-white\/\[0\.01\] {
+  background-color: var(--hover-override) !important;
+}
+
+/* Specific button styles that must remain white text in Light Mode */
+.light .bg-brand-600,
+.light .bg-brand-750,
+.light .bg-brand-700,
+.light .bg-brand-800,
+.light .bg-brand-600:hover,
+.light .bg-brand-700:hover,
+.light button[type="submit"],
+.light button.bg-brand-600,
+.light button.bg-brand-700,
+.light button.bg-brand-800,
+.light a.bg-brand-600,
+.light a.bg-brand-700,
+.light .bg-brand-700\/80 {
+  color: #ffffff !important;
+}
+
+/* Alert styles */
+.light .bg-red-950\/40 {
+  background-color: #fee2e2 !important;
+  border-color: #fca5a5 !important;
+  color: #991b1b !important;
+}
+
+.light .bg-brand-950\/40 {
+  background-color: #dbeafe !important;
+  border-color: #bfdbfe !important;
+  color: #1e40af !important;
+}
+
+/* Profile display text formatting fix in Light Mode */
+.light .text-dark-100 {
+  color: var(--dark-100) !important;
+}
+
+.light .text-dark-300 {
+  color: var(--dark-300) !important;
+}
+
+.light .text-dark-400 {
+  color: var(--dark-400) !important;
+}
+
+/* Navbar active indicator and line separation in light mode */
+.light nav .border-r {
+  border-color: var(--dark-800) !important;
+}
+
+/* Primary Button Styling in Light Mode */
+.light button.bg-brand-600,
+.light button.bg-brand-700,
+.light button.bg-brand-800,
+.light a.bg-brand-600,
+.light a.bg-brand-700 {
+  background-color: var(--brand-600) !important;
+  color: #ffffff !important;
+}
+
+.light button.bg-brand-600:hover,
+.light button.bg-brand-700:hover,
+.light a.bg-brand-600:hover {
+  background-color: var(--brand-700) !important;
+}
+
+/* Secondary Button overrides (Reset / Cancel) in Light Mode */
+.light button.bg-dark-900,
+.light a.bg-dark-900,
+.light button.px-3.py-2\.5.bg-dark-900 {
+  background-color: #ffffff !important;
+  border: 1px solid var(--brand-600) !important;
+  color: var(--brand-600) !important;
+}
+
+.light button.bg-dark-900:hover,
+.light a.bg-dark-900:hover,
+.light button.px-3.py-2\.5.bg-dark-900:hover {
+  background-color: var(--brand-50) !important;
+  color: var(--brand-700) !important;
+  border-color: var(--brand-700) !important;
+}
+
+/* Destructive / Alert Button overrides in Light Mode */
+.light button.bg-red-950\/40 {
+  background-color: #ffffff !important;
+  border: 1px solid #fca5a5 !important;
+  color: #b91c1c !important;
+}
+
+.light button.bg-red-950\/40:hover {
+  background-color: #fee2e2 !important;
+  border-color: #ef4444 !important;
+  color: #991b1b !important;
+}
+
+/* Table Row Hover effect */
+tr.hover\:bg-white\/\[0\.01\]:hover {
+  background-color: var(--hover-override) !important;
+}
+
+/* Form Icons styling */
+form .text-dark-500 {
+  color: var(--brand-600) !important;
+}
+
+.light .glass-panel {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Sidebar Link in Dark Mode */
+.sidebar-link {
+  color: var(--dark-400);
+  background-color: transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-link svg {
+  color: var(--dark-400);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-link:hover {
+  color: var(--brand-600);
+  background-color: var(--brand-50);
+}
+
+.sidebar-link:hover svg {
+  color: var(--brand-600);
+}
+
+.sidebar-link.active {
+  background-color: var(--brand-600);
+  color: #ffffff;
+  box-shadow: 0 4px 6px -1px rgba(34, 197, 94, 0.1), 0 2px 4px -1px rgba(34, 197, 94, 0.06);
+}
+
+.sidebar-link.active svg {
+  color: #ffffff;
+}
+
+/* Sidebar Link in Light Mode */
+.light .sidebar-link {
+  color: #111827 !important;
+  /* Menu text: Black (#111827) */
+  background-color: transparent !important;
+}
+
+.light .sidebar-link svg {
+  color: #6b7280 !important;
+  /* Default Gray icon */
+}
+
+.light .sidebar-link:hover {
+  background-color: #dbeafe !important;
+  /* Background changes to #dbeafe */
+  color: #2563eb !important;
+  /* Text becomes #2563eb */
+}
+
+.light .sidebar-link:hover svg {
+  color: #2563eb !important;
+  /* Icon becomes #2563eb */
+}
+
+.light .sidebar-link.active {
+  background-color: #2563eb !important;
+  /* Active Blue background: #2563EB */
+  color: #ffffff !important;
+  /* Text: White */
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.2) !important;
+  /* Soft blue shadow */
+  border-radius: 12px !important;
+  /* Border Radius: 12px */
+}
+
+.light .sidebar-link.active svg {
+  color: #ffffff !important;
+  /* Icon: White */
+}
+
+/* Theme Switcher */
+.theme-switcher-container {
+  display: flex;
+  padding: 4px;
+  border-radius: 9999px;
+  background-color: var(--dark-900);
+  border: 1px solid var(--dark-800);
+  width: 100%;
+  gap: 4px;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-switcher-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--dark-400);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-switcher-btn svg {
+  transition: transform 0.3s ease;
+}
+
+.theme-switcher-btn:hover {
+  color: var(--dark-100);
+}
+
+/* Dark Mode active style */
+.theme-switcher-btn.active {
+  background-color: rgba(34, 197, 94, 0.15) !important;
+  color: #22c55e !important;
+  border: 1px solid rgba(34, 197, 94, 0.3) !important;
+}
+
+/* Light Mode overrides */
+.light .theme-switcher-container {
+  background-color: #ffffff !important;
+  border: 1.5px solid #2563eb !important;
+}
+
+.light .theme-switcher-btn {
+  color: #6B7280;
+}
+
+.light .theme-switcher-btn:hover {
+  color: #2563eb;
+}
+
+.light .theme-switcher-btn.active {
+  background-color: #dbeafe !important;
+  /* light blue */
+  color: #2563eb !important;
+  /* active blue text */
+}
+
+.light .theme-switcher-btn.active svg {
+  color: #2563eb !important;
+  transform: rotate(15deg);
+}
+
+/* Dark Mode Override: Ensure no blue utilities show in Dark Mode */
+:root .bg-blue-950\/20,
+:root .bg-blue-950\/30,
+:root .bg-blue-950\/50,
+:root .bg-blue-950 {
+  background-color: rgba(6, 78, 59, 0.3) !important;
+  color: #34d399 !important;
+  border-color: rgba(6, 78, 59, 0.3) !important;
+}
+
+:root .text-blue-400,
+:root .text-blue-500 {
+  color: #34d399 !important;
+}
+
+:root .border-blue-900\/20,
+:root .border-blue-900\/30 {
+  border-color: rgba(6, 78, 59, 0.3) !important;
+}
+
+/* Logo Overrides in Light Mode */
+html.light .bg-brand-600.p-2.rounded-lg,
+html.light .bg-brand-600.p-3.rounded-2xl {
+  background-color: var(--brand-100) !important;
+  /* Light blue container */
+}
+
+html.light .bg-brand-600.p-2.rounded-lg svg,
+html.light .bg-brand-600.p-3.rounded-2xl svg {
+  color: var(--brand-600) !important;
+  /* Blue icon */
+}
+
+/* Tagline text: Gray (#6B7280) */
+.light span.text-brand-600.uppercase {
+  color: var(--dark-300) !important;
+}
+
+/* Table Details Action Button Override */
+.light .bg-dark-850,
+.light .bg-dark-750 {
+  background-color: #ffffff !important;
+  border: 1px solid var(--brand-600) !important;
+  color: var(--brand-600) !important;
+}
+
+.light .bg-dark-850:hover,
+.light .bg-dark-750:hover {
+  background-color: var(--brand-50) !important;
+  border-color: var(--brand-700) !important;
+  color: var(--brand-700) !important;
+}
+
+/* FORCED COMPLETE WHITE LIGHT MODE OVERRIDES */
+html.light,
+html.light body {
+  background-color: #ffffff !important;
+  background-image: none !important;
+  color: #374151 !important;
+}
+
+html.light aside {
+  background-color: #ffffff !important;
+  border-right: 1px solid #e5e7eb !important;
+}
+
+html.light main,
+html.light .flex-1 {
+  background-color: #ffffff !important;
+  background-image: none !important;
+}
+
+html.light h1,
+html.light h2,
+html.light h3,
+html.light h4,
+html.light h5,
+html.light h6,
+html.light th,
+html.light .font-bold.text-white,
+html.light .font-extrabold.text-white {
+  color: #111827 !important;
+  font-weight: 700 !important;
+}
+
+html.light .text-dark-100 {
+  color: #111827 !important;
+}
+
+html.light .text-dark-200 {
+  color: #374151 !important;
+}
+
+html.light .text-dark-300 {
+  color: #6b7280 !important;
+}
+
+html.light .text-dark-400 {
+  color: #6b7280 !important;
+}
+
+/* Force standard primary buttons hover color to #1D4ED8 */
+html.light button.bg-brand-600:hover,
+html.light a.bg-brand-600:hover,
+html.light button[type="submit"]:hover {
+  background-color: #1d4ed8 !important;
+}
+
+/* Specific transparent container overrides for pure white mode legibility */
+html.light .bg-dark-900,
+html.light .bg-dark-900\/50,
+html.light .bg-dark-900\/30,
+html.light .bg-dark-900\/20,
+html.light .bg-emerald-950\/20,
+html.light .bg-blue-950\/20 {
+  background-color: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  color: #374151 !important;
+}
+
+/* Ensure the text colors inside these boxes are dark and legible */
+html.light .bg-dark-900 span,
+html.light .bg-dark-900 p,
+html.light .bg-dark-900\/50 span,
+html.light .bg-dark-900\/50 p,
+html.light .bg-dark-900\/30 span,
+html.light .bg-dark-900\/30 p,
+html.light .bg-dark-900\/20 span,
+html.light .bg-dark-900\/20 p,
+html.light .bg-emerald-950\/20 span,
+html.light .bg-emerald-950\/20 p,
+html.light .bg-blue-950\/20 span,
+html.light .bg-blue-950\/20 p,
+html.light .bg-emerald-950\/20 li,
+html.light .bg-blue-950\/20 li {
+  color: #374151 !important;
+}
+
+/* Highlight the Primary Root Cause box with a clean blue border instead of a dark background */
+html.light .bg-brand-950\/30 {
+  background-color: #ffffff !important;
+  border: 1.5px solid #2563eb !important;
+  color: #111827 !important;
+}
+
+html.light .bg-brand-950\/30 p,
+html.light .bg-brand-950\/30 span,
+html.light .bg-brand-950\/30 div {
+  color: #111827 !important;
+}
+
+/* Style all border utilities to render as light gray borders in Light Mode */
+html.light .border-white\/5,
+html.light .border-white\/10,
+html.light .border-white\/20,
+html.light .border-white\/\[0\.02\] {
+  border-color: #e5e7eb !important;
+}
+
+/* Force brand backgrounds to be blue in Light Mode */
+html.light .bg-brand-500 {
+  background-color: #3b82f6 !important;
+}
+
+html.light .hover\:bg-brand-500:hover {
+  background-color: #3b82f6 !important;
+}
+
+html.light .bg-brand-600 {
+  background-color: #2563eb !important;
+}
+
+html.light .hover\:bg-brand-600:hover {
+  background-color: #2563eb !important;
+}
+
+html.light .bg-brand-700 {
+  background-color: #1d4ed8 !important;
+}
+
+html.light .hover\:bg-brand-700:hover {
+  background-color: #1d4ed8 !important;
+}
+
+/* Force brand text and icon colors to be blue in Light Mode */
+html.light .text-brand-400 {
+  color: #2563eb !important;
+}
+
+html.light .text-brand-500 {
+  color: #3b82f6 !important;
+}
+
+html.light .text-brand-600 {
+  color: #2563eb !important;
+}
+
+html.light .text-brand-700 {
+  color: #1d4ed8 !important;
+}
+
+/* Force Medium severity / risk badge to have white background, black text, and white border in Light Mode */
+html.light .bg-yellow-950\/50,
+html.light .bg-yellow-950\/60,
+html.light .bg-yellow-950 {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+  border-color: #ffffff !important;
+}
+
+html.light .text-yellow-400 {
+  color: #111827 !important;
+}
+
+html.light .border-yellow-900\/30 {
+  border-color: #ffffff !important;
+}
+
+/* Override browser autofill style in Light Mode to keep it white and consistent */
+html.light input:-webkit-autofill,
+html.light input:-webkit-autofill:hover, 
+html.light input:-webkit-autofill:focus, 
+html.light input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #ffffff inset !important;
+  -webkit-text-fill-color: #374151 !important;
+  transition: background-color 5000s ease-in-out 0s;
+}

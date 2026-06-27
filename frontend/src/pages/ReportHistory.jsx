@@ -1,0 +1,244 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { Search, Calendar, Trash2, FileText, ChevronRight, RefreshCw, SlidersHorizontal } from 'lucide-react';
+
+const ReportHistory = () => {
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const navigate = useNavigate();
+
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
+  const fetchReports = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const params = {};
+      if (search) params.search = search;
+      if (startDate) params.startDate = startDate;
+      if (endDate) params.endDate = endDate;
+
+      const res = await axios.get(`${API_URL}/reports`, {
+        headers: { Authorization: `Bearer ${token}` },
+        params
+      });
+      setReports(res.data);
+    } catch (err) {
+      console.error('Error fetching reports history:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchReports();
+  }, []);
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    fetchReports();
+  };
+
+  const handleResetFilters = () => {
+    setSearch('');
+    setStartDate('');
+    setEndDate('');
+    // Wait for state updates then query. Or do it instantly with empty values:
+    setTimeout(async () => {
+      setLoading(true);
+      try {
+        const token = localStorage.getItem('token');
+        const res = await axios.get(`${API_URL}/reports`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setReports(res.data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }, 50);
+  };
+
+  const handleDeleteReport = async (reportId, e) => {
+    e.stopPropagation(); // Avoid triggering card navigation click
+    if (!window.confirm('Are you sure you want to permanently delete this delay analysis report?')) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`${API_URL}/reports/${reportId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setReports(prev => prev.filter(r => r.id !== reportId));
+    } catch (err) {
+      console.error('Error deleting report:', err);
+      alert('Failed to delete report.');
+    }
+  };
+
+  const getSeverityBadgeColor = (severity) => {
+    switch (severity) {
+      case 'Critical':
+        return 'bg-red-950/50 text-red-400 border border-red-900/30';
+      case 'High':
+        return 'bg-orange-950/50 text-orange-400 border border-orange-900/30';
+      case 'Medium':
+        return 'bg-yellow-950/50 text-yellow-400 border border-yellow-900/30';
+      default:
+        return 'bg-blue-950/50 text-blue-400 border border-blue-900/30';
+    }
+  };
+
+  return (
+    <div className="space-y-8 animate-fade-in">
+      
+      {/* Page Title */}
+      <div className="border-b border-white/5 pb-5">
+        <h1 className="text-2xl font-extrabold text-white tracking-tight">Project Delay Report History</h1>
+        <p className="text-dark-400 text-sm mt-1">Review, filter, and export previously generated AI diagnostic reports.</p>
+      </div>
+
+      {/* Filters Form Block */}
+      <form onSubmit={handleSearchSubmit} className="glass-panel p-5 rounded-2xl border-white/5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+        <div>
+          <label className="block text-[10px] font-bold text-dark-300 uppercase tracking-wide mb-2">Search Query</label>
+          <div className="relative">
+            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-dark-500"><Search className="h-4 w-4" /></span>
+            <input
+              type="text"
+              className="w-full pl-9 pr-4 py-2.5 rounded-xl glass-input text-xs"
+              placeholder="Project Name, ID, or Location..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-[10px] font-bold text-dark-300 uppercase tracking-wide mb-2">Start Date</label>
+          <div className="relative">
+            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-dark-500"><Calendar className="h-4 w-4" /></span>
+            <input
+              type="date"
+              className="w-full pl-9 pr-4 py-2.5 rounded-xl glass-input text-xs"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-[10px] font-bold text-dark-300 uppercase tracking-wide mb-2">End Date</label>
+          <div className="relative">
+            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-dark-500"><Calendar className="h-4 w-4" /></span>
+            <input
+              type="date"
+              className="w-full pl-9 pr-4 py-2.5 rounded-xl glass-input text-xs"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="flex gap-2">
+          <button
+            type="submit"
+            className="flex-1 py-2.5 bg-brand-700 hover:bg-brand-600 text-white text-xs font-bold rounded-xl transition-all cursor-pointer"
+          >
+            Apply Filters
+          </button>
+          <button
+            type="button"
+            onClick={handleResetFilters}
+            className="px-3 py-2.5 bg-dark-900 hover:bg-dark-800 text-dark-300 hover:text-white border border-white/5 rounded-xl transition-all cursor-pointer"
+          >
+            Reset
+          </button>
+        </div>
+      </form>
+
+      {/* Reports List */}
+      {loading ? (
+        <div className="flex justify-center items-center h-48">
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-brand-500"></div>
+        </div>
+      ) : reports.length === 0 ? (
+        <div className="text-center py-20 border border-dashed border-white/5 rounded-2xl">
+          <FileText className="h-10 w-10 text-dark-500 mx-auto mb-3" />
+          <p className="text-sm text-dark-400 font-semibold">No delay reports match your search filter criteria.</p>
+          <button 
+            type="button" 
+            onClick={handleResetFilters}
+            className="mt-2 text-xs font-bold text-brand-400 hover:text-brand-300 transition-all cursor-pointer"
+          >
+            Clear active filters
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {reports.map((report) => (
+            <div
+              key={report.id}
+              onClick={() => navigate(`/reports/${report.id}`)}
+              className="glass-panel p-6 rounded-2xl border-white/5 glass-panel-hover flex flex-col justify-between cursor-pointer group"
+            >
+              <div className="space-y-4">
+                <div className="flex justify-between items-start gap-3">
+                  <div>
+                    <h3 className="font-extrabold text-white group-hover:text-brand-400 transition-all line-clamp-1">{report.projectName}</h3>
+                    <p className="text-[10px] text-dark-400 font-semibold mt-0.5">ID: {report.projectId} • {report.location}</p>
+                  </div>
+                  <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${getSeverityBadgeColor(report.severity)}`}>
+                    {report.severity}
+                  </span>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="text-xs text-dark-300 font-semibold">
+                    Primary Cause: 
+                    <span className="text-white block mt-0.5 font-medium line-clamp-2">
+                      {report.aiResponse?.primaryCause || 'Processing classification...'}
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-dark-400 font-medium">
+                    Classification: <span className="text-brand-400">{report.aiResponse?.rootCauseClassification || 'N/A'}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center mt-6 pt-4 border-t border-white/5">
+                <div className="text-[10px] text-dark-400 font-semibold">
+                  Filed: {new Date(report.createdAt).toLocaleDateString()}
+                  {report.user?.name && <span className="block mt-0.5 text-dark-500">By: {report.user.name}</span>}
+                </div>
+                
+                <div className="flex gap-2">
+                  <button
+                    onClick={(e) => handleDeleteReport(report.id, e)}
+                    className="p-2 bg-red-950/40 hover:bg-red-900/40 text-red-400 hover:text-red-300 border border-red-900/30 rounded-lg transition-all cursor-pointer"
+                    title="Delete Report"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    className="p-2 bg-dark-900 group-hover:bg-brand-600 group-hover:text-white text-dark-300 border border-white/5 group-hover:border-transparent rounded-lg transition-all"
+                  >
+                    <ChevronRight className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ReportHistory;

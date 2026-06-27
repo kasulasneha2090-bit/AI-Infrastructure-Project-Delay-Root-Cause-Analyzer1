@@ -1,0 +1,64 @@
+// Prisma Schema for AI Infrastructure Project Delay Root Cause Analyzer
+// Crownridge LLP
+
+datasource db {
+  // To switch to PostgreSQL (Supabase/Render), change provider to "postgresql"
+  // and set your postgres DATABASE_URL in the .env file.
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("User") // "User" or "Administrator"
+  createdAt DateTime @default(now())
+  reports   Report[]
+}
+
+model Report {
+  id            String    @id @default(uuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectName   String
+  projectId     String
+  location      String
+  weather       String
+  labour        String
+  material      String
+  equipment     String
+  approval      String
+  delayDuration String
+  severity      String
+  notes         String?
+  aiResponse    String    // JSON stringified payload
+  createdAt     DateTime  @default(now())
+  feedback      Feedback?
+}
+
+model Feedback {
+  id        String   @id @default(uuid())
+  reportId  String   @unique
+  report    Report   @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  rating    Int      // 1 to 5 stars
+  like      Boolean  @default(true) // true for Like, false for Dislike
+  comment   String?
+  createdAt DateTime @default(now())
+}
+
+model Template {
+  id        String   @id @default(uuid())
+  title     String
+  weather   String
+  labour    String
+  material  String
+  equipment String
+  approval  String
+  createdAt DateTime @default(now())
+}
