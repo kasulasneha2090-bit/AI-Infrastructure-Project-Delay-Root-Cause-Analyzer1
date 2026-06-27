@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Chart as ChartJS, CategoryScale, LinearScale, PointElement, 
   LineElement, BarElement, ArcElement, Title, Tooltip, Legend, Filler
@@ -103,7 +104,6 @@ const AdminDashboard = () => {
     }
   }, [activeTab]);
 
-  // Add allowed user
   const handleAddAllowedUser = async (e) => {
     e.preventDefault();
     setAddingUser(true);
@@ -130,7 +130,6 @@ const AdminDashboard = () => {
     }
   };
 
-  // Toggle user status
   const handleToggleStatus = async (user) => {
     setUserError('');
     setUserSuccess('');
@@ -145,13 +144,11 @@ const AdminDashboard = () => {
     }
   };
 
-  // Start editing
   const startEditing = (user) => {
     setEditingId(user.id);
     setEditForm({ name: user.name || '', role: user.role, status: user.status });
   };
 
-  // Save edit
   const handleSaveEdit = async (userId) => {
     setUserError('');
     setUserSuccess('');
@@ -166,7 +163,6 @@ const AdminDashboard = () => {
     }
   };
 
-  // Delete user
   const handleDeleteUser = async (user) => {
     if (!confirm(`Remove ${user.email} from allowed users? This will prevent them from logging in.`)) return;
     setUserError('');
@@ -200,8 +196,6 @@ const AdminDashboard = () => {
         equipment: '',
         approval: ''
       });
-      
-      // Refresh templates in delay form if we navigate
     } catch (err) {
       console.error(err);
       setError('Failed to register template.');
@@ -218,7 +212,6 @@ const AdminDashboard = () => {
     );
   }
 
-  // Pre-process chart datasets
   const dailyTrendData = {
     labels: analytics?.charts.dailyTrend.map(d => d.date) || [],
     datasets: [{
@@ -239,19 +232,19 @@ const AdminDashboard = () => {
     datasets: [{
       data: rcData,
       backgroundColor: isLight ? [
-        'rgba(37, 99, 235, 0.8)', // royal blue
-        'rgba(59, 130, 246, 0.8)', // hover blue
-        'rgba(245, 158, 11, 0.8)', // amber
-        'rgba(239, 68, 68, 0.8)',  // red
-        'rgba(139, 92, 246, 0.8)', // purple
-        'rgba(71, 85, 105, 0.8)',  // slate
+        'rgba(37, 99, 235, 0.8)',
+        'rgba(59, 130, 246, 0.8)',
+        'rgba(245, 158, 11, 0.8)',
+        'rgba(239, 68, 68, 0.8)',
+        'rgba(139, 92, 246, 0.8)',
+        'rgba(71, 85, 105, 0.8)',
       ] : [
-        'rgba(34, 197, 94, 0.75)', // green
-        'rgba(22, 163, 74, 0.75)', // darker green
-        'rgba(245, 158, 11, 0.75)', // amber
-        'rgba(239, 68, 68, 0.75)',  // red
-        'rgba(139, 92, 246, 0.75)', // purple
-        'rgba(100, 116, 139, 0.75)', // slate
+        'rgba(34, 197, 94, 0.75)',
+        'rgba(22, 163, 74, 0.75)',
+        'rgba(245, 158, 11, 0.75)',
+        'rgba(239, 68, 68, 0.75)',
+        'rgba(139, 92, 246, 0.75)',
+        'rgba(100, 116, 139, 0.75)',
       ],
       borderWidth: 1,
       borderColor: isLight ? '#ffffff' : 'rgba(255, 255, 255, 0.05)'
@@ -295,33 +288,50 @@ const AdminDashboard = () => {
     }
   };
 
-  // ====================== RENDER ======================
+  // Animation constants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.06 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100 } }
+  };
+
   return (
-    <div className="space-y-8 animate-fade-in">
-      
+    <motion.div 
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+      className="space-y-8"
+    >
       {/* Header */}
-      <div className="border-b border-white/5 pb-5 flex items-center justify-between">
+      <motion.div variants={itemVariants} className="border-b border-white/[0.06] pb-5 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-extrabold text-white tracking-tight flex items-center gap-2">
             <BarChart3 className="h-6 w-6 text-brand-500" />
             Executive Planning Analytics
           </h1>
-          <p className="text-dark-400 text-sm mt-1">Review operational performance metrics, user management, and quality assurance logs.</p>
+          <p className="text-slate-400 text-sm mt-1">Review operational performance metrics, user management, and quality assurance logs.</p>
         </div>
         <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-brand-950/60 border border-brand-900/30 text-xs font-semibold text-brand-400">
           <ShieldCheck className="h-4 w-4" />
           Admin Clearance Verified
         </span>
-      </div>
+      </motion.div>
 
       {/* Tab Switcher */}
-      <div className="flex gap-2">
+      <motion.div variants={itemVariants} className="flex gap-2">
         <button
           onClick={() => setActiveTab('analytics')}
           className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             activeTab === 'analytics'
               ? 'bg-brand-600 text-white shadow-lg shadow-brand-700/20'
-              : 'glass-panel text-dark-300 hover:text-white border border-white/5'
+              : 'glass-panel text-slate-300 hover:text-white border border-white/[0.06] bg-black/20'
           }`}
         >
           <BarChart3 className="h-4 w-4" />
@@ -332,65 +342,65 @@ const AdminDashboard = () => {
           className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             activeTab === 'users'
               ? 'bg-brand-600 text-white shadow-lg shadow-brand-700/20'
-              : 'glass-panel text-dark-300 hover:text-white border border-white/5'
+              : 'glass-panel text-slate-300 hover:text-white border border-white/[0.06] bg-black/20'
           }`}
         >
           <Users className="h-4 w-4" />
           Manage Users
         </button>
-      </div>
+      </motion.div>
 
       {/* ====================== ANALYTICS TAB ====================== */}
       {activeTab === 'analytics' && (
         <>
           {/* KPI Cards Row */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="glass-panel p-5 rounded-2xl border-white/5">
-              <span className="text-[10px] font-bold text-dark-400 uppercase tracking-widest block">Reports Today / Monthly</span>
-              <h3 className="text-2xl font-extrabold text-white mt-1.5">{analytics?.summary.reportsToday} / {analytics?.summary.reportsThisMonth}</h3>
-              <p className="text-[10px] text-dark-400 mt-2 font-medium">Daily input rate of diagnostic requests.</p>
+          <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="card-3d glass-panel p-5 rounded-3xl border border-white/[0.06] bg-black/35 backdrop-blur-xl shadow-xl flex flex-col justify-between h-32">
+              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block translate-z-10">Reports Today / Monthly</span>
+              <h3 className="text-2xl font-extrabold text-white mt-1.5 translate-z-20">{analytics?.summary.reportsToday} / {analytics?.summary.reportsThisMonth}</h3>
+              <p className="text-[10px] text-slate-500 mt-2">Daily input rate of requests.</p>
             </div>
 
-            <div className="glass-panel p-5 rounded-2xl border-white/5">
-              <span className="text-[10px] font-bold text-dark-400 uppercase tracking-widest block">AI Rating Average</span>
-              <h3 className="text-2xl font-extrabold text-white mt-1.5 flex items-center gap-1">
+            <div className="card-3d glass-panel p-5 rounded-3xl border border-white/[0.06] bg-black/35 backdrop-blur-xl shadow-xl flex flex-col justify-between h-32">
+              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block translate-z-10">AI Rating Average</span>
+              <h3 className="text-2xl font-extrabold text-white mt-1.5 flex items-center gap-1 translate-z-20">
                 {analytics?.summary.averageRating}
-                <span className="text-xs text-dark-400 font-semibold">/ 5.0</span>
+                <span className="text-xs text-slate-400 font-semibold">/ 5.0</span>
               </h3>
-              <div className="flex gap-0.5 mt-2">
+              <div className="flex gap-0.5 mt-2 translate-z-10">
                 {[1, 2, 3, 4, 5].map((s) => (
                   <Star key={s} className={`h-3 w-3 ${
                     s <= Math.round(parseFloat(analytics?.summary.averageRating || '0')) 
                       ? 'text-yellow-400 fill-yellow-400' 
-                      : 'text-dark-600'
+                      : 'text-slate-600'
                   }`} />
                 ))}
               </div>
             </div>
 
-            <div className="glass-panel p-5 rounded-2xl border-white/5">
-              <span className="text-[10px] font-bold text-dark-400 uppercase tracking-widest block">Top Delay Driver</span>
-              <h3 className="text-lg font-extrabold text-white mt-1.5 truncate" title={analytics?.summary.mostCommonRootCause}>
+            <div className="card-3d glass-panel p-5 rounded-3xl border border-white/[0.06] bg-black/35 backdrop-blur-xl shadow-xl flex flex-col justify-between h-32">
+              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block translate-z-10">Top Delay Driver</span>
+              <h3 className="text-base font-extrabold text-white mt-1.5 truncate translate-z-20" title={analytics?.summary.mostCommonRootCause}>
                 {analytics?.summary.mostCommonRootCause}
               </h3>
-              <p className="text-[10px] text-brand-400 mt-2 font-medium">Dominant delay classification category.</p>
+              <p className="text-[10px] text-brand-400 mt-2">Dominant delay category.</p>
             </div>
 
-            <div className="glass-panel p-5 rounded-2xl border-white/5">
-              <span className="text-[10px] font-bold text-dark-400 uppercase tracking-widest block">API Avg Response Time</span>
-              <h3 className="text-2xl font-extrabold text-white mt-1.5">
+            <div className="card-3d glass-panel p-5 rounded-3xl border border-white/[0.06] bg-black/35 backdrop-blur-xl shadow-xl flex flex-col justify-between h-32">
+              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block translate-z-10">API Avg Response Time</span>
+              <h3 className="text-2xl font-extrabold text-white mt-1.5 translate-z-20">
                 {((analytics?.responseTimeMetrics.averageLatencyMs || 1420) / 1000).toFixed(2)}s
               </h3>
-              <p className="text-[10px] text-emerald-400 mt-2 font-medium">SLA compliance rate is active.</p>
+              <p className="text-[10px] text-emerald-400 mt-2">SLA compliance rate is active.</p>
             </div>
-          </div>
+          </motion.div>
 
           {/* Analytics Charts Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             
             {/* Trend Volume Line Chart */}
-            <div className="glass-panel p-6 rounded-2xl border-white/5">
-              <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-4 flex items-center gap-1.5">
+            <div className="glass-panel p-6 rounded-3xl border border-white/[0.06] bg-black/30 backdrop-blur-xl shadow-xl">
+              <h3 className="text-xs font-bold text-white uppercase tracking-widest mb-4 flex items-center gap-1.5 border-b border-white/[0.06] pb-3">
                 <Calendar className="h-4.5 w-4.5 text-brand-500" />
                 Report Submission Volume Trend (Daily)
               </h3>
@@ -400,14 +410,14 @@ const AdminDashboard = () => {
             </div>
 
             {/* Doughnut Causes Chart */}
-            <div className="glass-panel p-6 rounded-2xl border-white/5">
-              <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-4 flex items-center gap-1.5">
+            <div className="glass-panel p-6 rounded-3xl border border-white/[0.06] bg-black/30 backdrop-blur-xl shadow-xl">
+              <h3 className="text-xs font-bold text-white uppercase tracking-widest mb-4 flex items-center gap-1.5 border-b border-white/[0.06] pb-3">
                 <BarChart3 className="h-4.5 w-4.5 text-brand-500" />
                 Root Cause Distribution Share
               </h3>
               <div className="h-60 relative flex justify-center">
                 {rcData.length === 0 ? (
-                  <div className="flex items-center text-xs text-dark-400">No cause classifications processed yet.</div>
+                  <div className="flex items-center text-xs text-slate-500">No cause classifications processed yet.</div>
                 ) : (
                   <Doughnut 
                     data={rootCauseChartData} 
@@ -421,32 +431,32 @@ const AdminDashboard = () => {
             </div>
 
             {/* Severity categories Bar Chart */}
-            <div className="glass-panel p-6 rounded-2xl border-white/5">
-              <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-4">Delay Event Severity Breakdowns</h3>
+            <div className="glass-panel p-6 rounded-3xl border border-white/[0.06] bg-black/30 backdrop-blur-xl shadow-xl">
+              <h3 className="text-xs font-bold text-white uppercase tracking-widest mb-4 border-b border-white/[0.06] pb-3">Delay Event Severity Breakdowns</h3>
               <div className="h-60">
                 <Bar data={severityChartData} options={chartOptions} />
               </div>
             </div>
 
             {/* Create template form card */}
-            <div className="glass-panel p-6 rounded-2xl border-white/5 space-y-4">
-              <h3 className="text-sm font-bold text-white uppercase tracking-widest flex items-center gap-1.5">
+            <div className="glass-panel p-6 rounded-3xl border border-white/[0.06] bg-black/30 backdrop-blur-xl shadow-xl space-y-4">
+              <h3 className="text-xs font-bold text-white uppercase tracking-widest border-b border-white/[0.06] pb-3 flex items-center gap-1.5">
                 <Settings className="h-4.5 w-4.5 text-brand-500" />
                 Incident Quick-Fill Template Creator
               </h3>
               
               {templateSuccess && (
-                <div className="p-3.5 rounded-xl bg-brand-950/40 border border-brand-900/30 text-brand-400 text-xs font-semibold">
+                <div className="p-3.5 rounded-xl bg-brand-950/40 border border-brand-900/35 text-brand-400 text-xs font-semibold">
                   Template created and indexed globally!
                 </div>
               )}
 
               <form onSubmit={handleTemplateSubmit} className="space-y-3.5">
                 <div>
-                  <label className="block text-[9px] font-bold text-dark-300 uppercase mb-1">Template Title</label>
+                  <label className="block text-[9px] font-bold text-slate-400 uppercase mb-1">Template Title</label>
                   <input
                     type="text" required
-                    className="w-full px-3 py-2 rounded-lg glass-input text-xs"
+                    className="w-full px-3 py-2.5 rounded-lg bg-slate-950/40 border border-white/[0.08] focus:border-brand-500/50 text-white text-xs focus:outline-none"
                     placeholder="e.g. Winter Blizzard Contingency"
                     value={templateForm.title}
                     onChange={(e) => setTemplateForm({...templateForm, title: e.target.value})}
@@ -455,40 +465,40 @@ const AdminDashboard = () => {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[9px] font-bold text-dark-300 uppercase mb-1">Weather Factor</label>
+                    <label className="block text-[9px] font-bold text-slate-400 uppercase mb-1">Weather Factor</label>
                     <input
                       type="text" required
-                      className="w-full px-3 py-2 rounded-lg glass-input text-xs"
+                      className="w-full px-3 py-2 rounded-lg bg-slate-950/40 border border-white/[0.08] focus:border-brand-500/50 text-white text-xs focus:outline-none"
                       placeholder="Snowstorm, high winds"
                       value={templateForm.weather}
                       onChange={(e) => setTemplateForm({...templateForm, weather: e.target.value})}
                     />
                   </div>
                   <div>
-                    <label className="block text-[9px] font-bold text-dark-300 uppercase mb-1">Labour Factor</label>
+                    <label className="block text-[9px] font-bold text-slate-400 uppercase mb-1">Labour Factor</label>
                     <input
                       type="text" required
-                      className="w-full px-3 py-2 rounded-lg glass-input text-xs"
+                      className="w-full px-3 py-2 rounded-lg bg-slate-950/40 border border-white/[0.08] focus:border-brand-500/50 text-white text-xs focus:outline-none"
                       placeholder="Absenteeism, strike"
                       value={templateForm.labour}
                       onChange={(e) => setTemplateForm({...templateForm, labour: e.target.value})}
                     />
                   </div>
                   <div>
-                    <label className="block text-[9px] font-bold text-dark-300 uppercase mb-1">Material Factor</label>
+                    <label className="block text-[9px] font-bold text-slate-400 uppercase mb-1">Material Factor</label>
                     <input
                       type="text" required
-                      className="w-full px-3 py-2 rounded-lg glass-input text-xs"
+                      className="w-full px-3 py-2 rounded-lg bg-slate-950/40 border border-white/[0.08] focus:border-brand-500/50 text-white text-xs focus:outline-none"
                       placeholder="Steel delay, cargo block"
                       value={templateForm.material}
                       onChange={(e) => setTemplateForm({...templateForm, material: e.target.value})}
                     />
                   </div>
                   <div>
-                    <label className="block text-[9px] font-bold text-dark-300 uppercase mb-1">Equipment Factor</label>
+                    <label className="block text-[9px] font-bold text-slate-400 uppercase mb-1">Equipment Factor</label>
                     <input
                       type="text" required
-                      className="w-full px-3 py-2 rounded-lg glass-input text-xs"
+                      className="w-full px-3 py-2 rounded-lg bg-slate-950/40 border border-white/[0.08] focus:border-brand-500/50 text-white text-xs focus:outline-none"
                       placeholder="Generator break, loader repairs"
                       value={templateForm.equipment}
                       onChange={(e) => setTemplateForm({...templateForm, equipment: e.target.value})}
@@ -497,10 +507,10 @@ const AdminDashboard = () => {
                 </div>
 
                 <div>
-                  <label className="block text-[9px] font-bold text-dark-300 uppercase mb-1">Permits / Approvals Factor</label>
+                  <label className="block text-[9px] font-bold text-slate-400 uppercase mb-1">Permits / Approvals Factor</label>
                   <input
                     type="text" required
-                    className="w-full px-3 py-2 rounded-lg glass-input text-xs"
+                    className="w-full px-3 py-2 rounded-lg bg-slate-950/40 border border-white/[0.08] focus:border-brand-500/50 text-white text-xs focus:outline-none"
                     placeholder="Permit pending zoning review"
                     value={templateForm.approval}
                     onChange={(e) => setTemplateForm({...templateForm, approval: e.target.value})}
@@ -510,61 +520,61 @@ const AdminDashboard = () => {
                 <button
                   type="submit"
                   disabled={templateLoading}
-                  className="w-full py-2.5 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="w-full py-3 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-lg hover:shadow-brand-800/25"
                 >
                   <PlusCircle className="h-4 w-4" />
                   {templateLoading ? 'Publishing Template...' : 'Publish Template'}
                 </button>
               </form>
             </div>
-          </div>
+          </motion.div>
 
           {/* User comments list table */}
-          <div className="glass-panel p-6 rounded-2xl border-white/5">
-            <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-4 flex items-center gap-1.5">
+          <motion.div variants={itemVariants} className="glass-panel p-6 rounded-3xl border border-white/[0.06] bg-black/30 backdrop-blur-xl shadow-xl">
+            <h3 className="text-xs font-bold text-white uppercase tracking-widest mb-4 flex items-center gap-1.5 border-b border-white/[0.06] pb-3">
               <MessageSquare className="h-4.5 w-4.5 text-brand-500" />
               User Feedback Comments & Quality Logs
             </h3>
 
             {feedbackLogs.length === 0 ? (
-              <div className="text-center py-8 text-xs text-dark-400">No project manager feedback reports recorded yet.</div>
+              <div className="text-center py-8 text-xs text-slate-500">No feedback reports recorded yet.</div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-white/5 text-[9px] uppercase font-bold text-dark-400 tracking-wider">
-                      <th className="pb-3">Project Details</th>
+                    <tr className="border-b border-white/[0.06] text-[9px] uppercase font-bold text-slate-400 tracking-wider">
+                      <th className="pb-3 pl-2">Project Details</th>
                       <th className="pb-3">Submitter</th>
                       <th className="pb-3">Rating Score</th>
                       <th className="pb-3">Feedback Remarks</th>
-                      <th className="pb-3 text-right">Date</th>
+                      <th className="pb-3 text-right pr-2">Date</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/5">
+                  <tbody className="divide-y divide-white/[0.04]">
                     {feedbackLogs.map((log) => (
-                      <tr key={log.id} className="text-xs hover:bg-white/[0.01] transition-all">
-                        <td className="py-3">
-                          <div className="font-semibold text-white">{log.report.projectName}</div>
-                          <div className="text-[10px] text-dark-400">ID: {log.report.projectId}</div>
+                      <tr key={log.id} className="text-xs hover:bg-white/[0.01] transition-all group">
+                        <td className="py-3 pl-2">
+                          <div className="font-semibold text-white group-hover:text-brand-400 transition-colors">{log.report.projectName}</div>
+                          <div className="text-[10px] text-slate-500 mt-0.5">ID: {log.report.projectId}</div>
                         </td>
                         <td className="py-3">
-                          <div className="text-dark-200">{log.report.user?.name || 'Unknown'}</div>
-                          <div className="text-[10px] text-dark-500">{log.report.user?.email || 'N/A'}</div>
+                          <div className="text-slate-300">{log.report.user?.name || 'Unknown'}</div>
+                          <div className="text-[10px] text-slate-500 mt-0.5">{log.report.user?.email || 'N/A'}</div>
                         </td>
                         <td className="py-3">
                           <div className="flex gap-0.5 items-center">
                             <span className="font-bold text-white mr-1">{log.rating}.0</span>
                             {[1, 2, 3, 4, 5].map((s) => (
                               <Star key={s} className={`h-3 w-3 ${
-                                s <= log.rating ? 'text-yellow-400 fill-yellow-400' : 'text-dark-700'
+                                s <= log.rating ? 'text-yellow-400 fill-yellow-400' : 'text-slate-700'
                               }`} />
                             ))}
                           </div>
                         </td>
-                        <td className="py-3 text-dark-300 font-medium max-w-[200px] truncate" title={log.comment}>
-                          {log.comment || <span className="text-dark-500 italic">No comments</span>}
+                        <td className="py-3 text-slate-300 font-medium max-w-[200px] truncate" title={log.comment}>
+                          {log.comment || <span className="text-slate-500 italic">No comments</span>}
                         </td>
-                        <td className="py-3 text-right text-dark-400">
+                        <td className="py-3 text-right text-slate-400 pr-2">
                           {new Date(log.createdAt).toLocaleDateString()}
                         </td>
                       </tr>
@@ -573,34 +583,33 @@ const AdminDashboard = () => {
                 </table>
               </div>
             )}
-          </div>
+          </motion.div>
         </>
       )}
 
       {/* ====================== MANAGE USERS TAB ====================== */}
       {activeTab === 'users' && (
-        <div className="space-y-6">
+        <div className="space-y-6 animate-fade-in">
 
-          {/* User Management Header */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <h2 className="text-lg font-extrabold text-white flex items-center gap-2">
                 <Shield className="h-5 w-5 text-brand-500" />
                 Allowed Users Directory
               </h2>
-              <p className="text-dark-400 text-xs mt-1">Only users listed here can log into the system. Role and status are controlled from this panel.</p>
+              <p className="text-slate-400 text-xs mt-1">Only users listed here can log into the system. Role and status are controlled from this panel.</p>
             </div>
             <div className="flex gap-2">
               <button
                 onClick={() => setShowAddForm(!showAddForm)}
-                className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold bg-brand-600 hover:bg-brand-500 text-white transition-all cursor-pointer shadow-lg shadow-brand-700/15"
+                className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold bg-brand-600 hover:bg-brand-500 text-white transition-all cursor-pointer shadow-lg hover:shadow-brand-800/25"
               >
                 <UserPlus className="h-4 w-4" />
                 Add Allowed User
               </button>
               <button
                 onClick={() => navigate('/register')}
-                className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold glass-panel text-dark-300 hover:text-white border border-white/5 transition-all cursor-pointer"
+                className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold glass-panel text-slate-300 hover:text-white border border-white/[0.06] bg-black/20 transition-all cursor-pointer"
               >
                 <PlusCircle className="h-4 w-4" />
                 Create Account
@@ -608,55 +617,57 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          {/* Status Messages */}
           {userError && (
-            <div className="flex items-start gap-2.5 p-3.5 rounded-xl bg-red-950/40 border border-red-900/30 text-red-400 text-sm">
-              <AlertCircle className="h-5 w-5 shrink-0 mt-0.5" />
+            <div className="flex items-start gap-2.5 p-3.5 rounded-xl bg-red-950/40 border border-red-500/20 text-red-400 text-xs">
+              <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
               <span>{userError}</span>
               <button onClick={() => setUserError('')} className="ml-auto shrink-0 cursor-pointer"><XCircle className="h-4 w-4" /></button>
             </div>
           )}
           {userSuccess && (
-            <div className="flex items-start gap-2.5 p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-900/30 text-emerald-400 text-sm">
-              <CheckCircle className="h-5 w-5 shrink-0 mt-0.5" />
+            <div className="flex items-start gap-2.5 p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-500/20 text-emerald-400 text-xs">
+              <CheckCircle className="h-4 w-4 shrink-0 mt-0.5" />
               <span>{userSuccess}</span>
               <button onClick={() => setUserSuccess('')} className="ml-auto shrink-0 cursor-pointer"><XCircle className="h-4 w-4" /></button>
             </div>
           )}
 
-          {/* Add Allowed User Form (Collapsible) */}
           {showAddForm && (
-            <div className="glass-panel p-6 rounded-2xl border-white/5 animate-fade-in">
-              <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-4 flex items-center gap-1.5">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.98, y: -10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              className="glass-panel p-6 rounded-3xl border border-white/[0.06] bg-black/35 backdrop-blur-xl shadow-xl"
+            >
+              <h3 className="text-xs font-bold text-white uppercase tracking-widest mb-4 flex items-center gap-1.5">
                 <UserPlus className="h-4.5 w-4.5 text-brand-500" />
                 Add to Allowed Users List
               </h3>
               <form onSubmit={handleAddAllowedUser} className="flex flex-col sm:flex-row gap-3 items-end">
                 <div className="flex-1">
-                  <label className="block text-[9px] font-bold text-dark-300 uppercase mb-1">Name</label>
+                  <label className="block text-[9px] font-bold text-slate-400 uppercase mb-1">Name</label>
                   <input
                     type="text"
-                    className="w-full px-3 py-2.5 rounded-lg glass-input text-xs"
+                    className="w-full px-3 py-2.5 rounded-lg bg-slate-950/40 border border-white/[0.08] focus:border-brand-500/50 text-white text-xs focus:outline-none"
                     placeholder="John Doe"
                     value={newUserForm.name}
                     onChange={(e) => setNewUserForm({...newUserForm, name: e.target.value})}
                   />
                 </div>
                 <div className="flex-1">
-                  <label className="block text-[9px] font-bold text-dark-300 uppercase mb-1">Email *</label>
+                  <label className="block text-[9px] font-bold text-slate-400 uppercase mb-1">Email *</label>
                   <input
                     type="email"
                     required
-                    className="w-full px-3 py-2.5 rounded-lg glass-input text-xs"
+                    className="w-full px-3 py-2.5 rounded-lg bg-slate-950/40 border border-white/[0.08] focus:border-brand-500/50 text-white text-xs focus:outline-none"
                     placeholder="j.doe@crownridge.com"
                     value={newUserForm.email}
                     onChange={(e) => setNewUserForm({...newUserForm, email: e.target.value})}
                   />
                 </div>
                 <div className="w-36">
-                  <label className="block text-[9px] font-bold text-dark-300 uppercase mb-1">Role *</label>
+                  <label className="block text-[9px] font-bold text-slate-400 uppercase mb-1">Role *</label>
                   <select
-                    className="w-full px-3 py-2.5 rounded-lg glass-input text-xs appearance-none"
+                    className="w-full px-3 py-2.5 rounded-lg bg-slate-950/40 border border-white/[0.08] focus:border-brand-500/50 text-white text-xs focus:outline-none cursor-pointer"
                     value={newUserForm.role}
                     onChange={(e) => setNewUserForm({...newUserForm, role: e.target.value})}
                   >
@@ -674,32 +685,28 @@ const AdminDashboard = () => {
                 <button
                   type="button"
                   onClick={() => setShowAddForm(false)}
-                  className="px-3 py-2.5 text-dark-400 hover:text-dark-200 text-xs font-bold cursor-pointer"
+                  className="px-3 py-2.5 text-slate-500 hover:text-white text-xs font-bold cursor-pointer"
                 >
                   Cancel
                 </button>
               </form>
-              <p className="text-[10px] text-dark-500 mt-3">
-                After adding, use <strong>"Create Account"</strong> to set up their login credentials (name, email, password).
-              </p>
-            </div>
+            </motion.div>
           )}
 
-          {/* Users Table */}
-          <div className="glass-panel p-6 rounded-2xl border-white/5">
+          <div className="glass-panel p-6 rounded-3xl border border-white/[0.06] bg-black/30 backdrop-blur-xl shadow-xl">
             {usersLoading ? (
               <div className="flex justify-center items-center py-12">
                 <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-brand-500"></div>
               </div>
             ) : allowedUsers.length === 0 ? (
-              <div className="text-center py-12 text-xs text-dark-400">
-                No allowed users found. Use "Add Allowed User" to add the first entry.
+              <div className="text-center py-12 text-xs text-slate-500">
+                No allowed users found.
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-white/5 text-[9px] uppercase font-bold text-dark-400 tracking-wider">
+                    <tr className="border-b border-white/[0.06] text-[9px] uppercase font-bold text-slate-400 tracking-wider">
                       <th className="pb-3 pl-2">Email</th>
                       <th className="pb-3">Name</th>
                       <th className="pb-3">Role</th>
@@ -708,28 +715,28 @@ const AdminDashboard = () => {
                       <th className="pb-3 text-right pr-2">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/5">
+                  <tbody className="divide-y divide-white/[0.04]">
                     {allowedUsers.map((user) => (
-                      <tr key={user.id} className="text-xs hover:bg-white/[0.01] transition-all">
+                      <tr key={user.id} className="text-xs hover:bg-white/[0.01] transition-all group">
                         <td className="py-3 pl-2">
-                          <span className="font-semibold text-white">{user.email}</span>
+                          <span className="font-semibold text-white group-hover:text-brand-400 transition-colors">{user.email}</span>
                         </td>
                         <td className="py-3">
                           {editingId === user.id ? (
                             <input
                               type="text"
-                              className="px-2 py-1 rounded glass-input text-xs w-32"
+                              className="px-2 py-1 rounded bg-slate-950/40 border border-white/[0.08] text-white text-xs w-32 focus:outline-none"
                               value={editForm.name}
                               onChange={(e) => setEditForm({...editForm, name: e.target.value})}
                             />
                           ) : (
-                            <span className="text-dark-300">{user.name || '—'}</span>
+                            <span className="text-slate-300">{user.name || '—'}</span>
                           )}
                         </td>
                         <td className="py-3">
                           {editingId === user.id ? (
                             <select
-                              className="px-2 py-1 rounded glass-input text-xs appearance-none"
+                              className="px-2 py-1 rounded bg-slate-950/40 border border-white/[0.08] text-white text-xs cursor-pointer focus:outline-none"
                               value={editForm.role}
                               onChange={(e) => setEditForm({...editForm, role: e.target.value})}
                             >
@@ -737,7 +744,7 @@ const AdminDashboard = () => {
                               <option value="admin">Admin</option>
                             </select>
                           ) : (
-                            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                            <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-bold ${
                               user.role === 'admin' 
                                 ? 'bg-purple-950/40 border border-purple-900/30 text-purple-400' 
                                 : 'bg-blue-950/40 border border-blue-900/30 text-blue-400'
@@ -749,12 +756,11 @@ const AdminDashboard = () => {
                         <td className="py-3">
                           <button
                             onClick={() => handleToggleStatus(user)}
-                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold cursor-pointer transition-all ${
+                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold cursor-pointer transition-all ${
                               user.status === 'active'
                                 ? 'bg-emerald-950/40 border border-emerald-900/30 text-emerald-400 hover:bg-emerald-900/30'
                                 : 'bg-red-950/40 border border-red-900/30 text-red-400 hover:bg-red-900/30'
                             }`}
-                            title={`Click to ${user.status === 'active' ? 'deactivate' : 'activate'}`}
                           >
                             {user.status === 'active' ? (
                               <><ToggleRight className="h-3 w-3" /> Active</>
@@ -763,7 +769,7 @@ const AdminDashboard = () => {
                             )}
                           </button>
                         </td>
-                        <td className="py-3 text-dark-500">
+                        <td className="py-3 text-slate-500">
                           {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : '—'}
                         </td>
                         <td className="py-3 text-right pr-2">
@@ -772,13 +778,13 @@ const AdminDashboard = () => {
                               <>
                                 <button
                                   onClick={() => handleSaveEdit(user.id)}
-                                  className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-brand-600 text-white hover:bg-brand-500 transition-all cursor-pointer"
+                                  className="px-2.5 py-1 rounded bg-brand-600 text-white hover:bg-brand-500 text-[10px] font-bold transition-all cursor-pointer"
                                 >
                                   Save
                                 </button>
                                 <button
                                   onClick={() => setEditingId(null)}
-                                  className="px-2.5 py-1 rounded-lg text-[10px] font-bold text-dark-400 hover:text-dark-200 transition-all cursor-pointer"
+                                  className="px-2.5 py-1 rounded text-[10px] font-bold text-slate-500 hover:text-white transition-all cursor-pointer"
                                 >
                                   Cancel
                                 </button>
@@ -787,14 +793,14 @@ const AdminDashboard = () => {
                               <>
                                 <button
                                   onClick={() => startEditing(user)}
-                                  className="p-1.5 rounded-lg text-dark-400 hover:text-brand-400 hover:bg-brand-950/30 transition-all cursor-pointer"
+                                  className="p-1.5 rounded-lg text-slate-500 hover:text-brand-400 hover:bg-brand-950/30 transition-all cursor-pointer"
                                   title="Edit"
                                 >
                                   <Edit3 className="h-3.5 w-3.5" />
                                 </button>
                                 <button
                                   onClick={() => handleDeleteUser(user)}
-                                  className="p-1.5 rounded-lg text-dark-400 hover:text-red-400 hover:bg-red-950/30 transition-all cursor-pointer"
+                                  className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-950/30 transition-all cursor-pointer"
                                   title="Remove"
                                 >
                                   <Trash2 className="h-3.5 w-3.5" />
@@ -811,30 +817,29 @@ const AdminDashboard = () => {
             )}
           </div>
 
-          {/* How it works info card */}
-          <div className="glass-panel p-5 rounded-2xl border-white/5">
+          <div className="glass-panel p-5 rounded-3xl border border-white/[0.06] bg-black/30 backdrop-blur-xl">
             <h3 className="text-xs font-bold text-white uppercase tracking-widest mb-3 flex items-center gap-1.5">
               <Shield className="h-4 w-4 text-brand-500" />
               How User Access Works
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-[11px] text-dark-400">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-[11px] text-slate-400 leading-relaxed">
               <div className="space-y-1">
-                <div className="font-bold text-dark-200">Step 1: Allow User</div>
+                <div className="font-bold text-slate-200">Step 1: Allow User</div>
                 <p>Add their email and role to this list. Status must be "active".</p>
               </div>
               <div className="space-y-1">
-                <div className="font-bold text-dark-200">Step 2: Create Account</div>
+                <div className="font-bold text-slate-200">Step 2: Create Account</div>
                 <p>Use "Create Account" to set their name and initial password.</p>
               </div>
               <div className="space-y-1">
-                <div className="font-bold text-dark-200">Step 3: User Logs In</div>
+                <div className="font-bold text-slate-200">Step 3: User Logs In</div>
                 <p>System checks allowedUsers → validates credentials → grants access with assigned role.</p>
               </div>
             </div>
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 };
 

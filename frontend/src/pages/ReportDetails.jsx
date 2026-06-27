@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { jsPDF } from 'jspdf';
+import { motion } from 'framer-motion';
 import { 
-  FileText, ArrowLeft, Download, Clipboard, Printer, Share2, 
+  FileText, ArrowLeft, Download, Clipboard, Printer, 
   Star, ThumbsUp, ThumbsDown, CheckCircle, ShieldAlert, Sparkles, 
-  HelpCircle, AlertTriangle, RefreshCw 
+  AlertTriangle, RefreshCw 
 } from 'lucide-react';
 
 const ReportDetails = () => {
@@ -33,7 +34,6 @@ const ReportDetails = () => {
         });
         setReport(res.data);
         
-        // If feedback already exists, prefill
         if (res.data.feedback) {
           setRating(res.data.feedback.rating);
           setLike(res.data.feedback.like);
@@ -137,17 +137,14 @@ ESTIMATED RECOVERY TIME: ${ai.estimatedRecoveryTime}
     const ai = report.aiResponse;
     const doc = new jsPDF();
 
-    // Color definitions
-    const primaryColor = [21, 128, 61]; // Forest Green
+    const primaryColor = [21, 128, 61];
     const darkText = [30, 41, 59];
     const lightText = [100, 116, 139];
 
-    // Page margin settings
     let y = 20;
     const margin = 20;
     const width = 170;
 
-    // Header Logo & Branding
     doc.setFont("Helvetica", "bold");
     doc.setFontSize(20);
     doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
@@ -162,7 +159,6 @@ ESTIMATED RECOVERY TIME: ${ai.estimatedRecoveryTime}
     doc.line(margin, y, margin + width, y);
     y += 10;
 
-    // Metadata Table Grid
     doc.setFont("Helvetica", "bold");
     doc.setFontSize(10);
     doc.setTextColor(darkText[0], darkText[1], darkText[2]);
@@ -182,7 +178,6 @@ ESTIMATED RECOVERY TIME: ${ai.estimatedRecoveryTime}
     doc.line(margin, y, margin + width, y);
     y += 10;
 
-    // 1. Executive Summary
     doc.setFont("Helvetica", "bold");
     doc.text("1. EXECUTIVE SUMMARY", margin, y);
     y += 6;
@@ -192,7 +187,6 @@ ESTIMATED RECOVERY TIME: ${ai.estimatedRecoveryTime}
     doc.text(summaryLines, margin, y);
     y += (summaryLines.length * 5) + 8;
 
-    // 2. Cause Classification
     doc.setFont("Helvetica", "bold");
     doc.text("2. ROOT CAUSE CLASSIFICATION", margin, y);
     y += 6;
@@ -204,7 +198,6 @@ ESTIMATED RECOVERY TIME: ${ai.estimatedRecoveryTime}
     doc.text(primaryCauseLines, margin, y);
     y += (primaryCauseLines.length * 5) + 6;
 
-    // Contributing factors
     doc.setFont("Helvetica", "bold");
     doc.text("Contributing Factors Identified:", margin, y);
     y += 5;
@@ -216,13 +209,11 @@ ESTIMATED RECOVERY TIME: ${ai.estimatedRecoveryTime}
     });
     y += 8;
 
-    // Check if space remaining is sufficient for rest, otherwise add page
     if (y > 220) {
       doc.addPage();
       y = 20;
     }
 
-    // 3. Impact & Recovery
     doc.setFont("Helvetica", "bold");
     doc.text("3. BUSINESS IMPACT & CONTRACTUAL RISK", margin, y);
     y += 6;
@@ -241,7 +232,6 @@ ESTIMATED RECOVERY TIME: ${ai.estimatedRecoveryTime}
       y = 20;
     }
 
-    // 4. Recommendations
     doc.setFont("Helvetica", "bold");
     doc.text("4. RECOMMENDED MITIGATION STRATEGIES (IMMEDIATE)", margin, y);
     y += 6;
@@ -268,7 +258,6 @@ ESTIMATED RECOVERY TIME: ${ai.estimatedRecoveryTime}
       y += (prevLines.length * 5) + 2;
     });
 
-    // Save
     doc.save(`${report.projectName.replace(/\s+/g, '_')}_delay_report.pdf`);
   };
 
@@ -319,10 +308,10 @@ ESTIMATED RECOVERY TIME: ${ai.estimatedRecoveryTime}
 
   if (error && !report) {
     return (
-      <div className="p-6 rounded-2xl glass-panel border-white/5 text-center space-y-4">
+      <div className="p-6 rounded-2xl glass-panel border border-white/[0.06] text-center space-y-4 max-w-md mx-auto">
         <AlertTriangle className="h-10 w-10 text-red-500 mx-auto" />
         <p className="text-red-400 font-semibold">{error}</p>
-        <button onClick={() => navigate('/dashboard')} className="px-4 py-2 bg-dark-900 border border-white/5 rounded-xl text-xs font-semibold cursor-pointer">
+        <button onClick={() => navigate('/dashboard')} className="px-4 py-2 bg-dark-900 border border-white/[0.06] rounded-xl text-xs font-semibold cursor-pointer">
           Return to Dashboard
         </button>
       </div>
@@ -332,13 +321,32 @@ ESTIMATED RECOVERY TIME: ${ai.estimatedRecoveryTime}
   const ai = report.aiResponse;
   const sevStyle = getSeverityStyle(report.severity);
 
+  // Animation constants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.06 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100 } }
+  };
+
   return (
-    <div className="space-y-8 animate-fade-in print:bg-white print:text-black">
+    <motion.div 
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+      className="space-y-8 print:bg-white print:text-black"
+    >
       {/* Navigation & Export Actions */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/5 pb-5 print:hidden">
+      <motion.div variants={itemVariants} className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/[0.06] pb-5 print:hidden">
         <button
           onClick={() => navigate('/history')}
-          className="flex items-center gap-1.5 text-xs font-semibold text-dark-300 hover:text-white transition-all cursor-pointer"
+          className="flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-all cursor-pointer"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to History
@@ -347,50 +355,53 @@ ESTIMATED RECOVERY TIME: ${ai.estimatedRecoveryTime}
         <div className="flex flex-wrap gap-2">
           <button
             onClick={copyToClipboard}
-            className="flex items-center gap-1.5 px-3 py-2 bg-dark-900 hover:bg-dark-800 text-xs font-semibold border border-white/5 rounded-xl transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-2 bg-dark-900 hover:bg-dark-850 text-xs font-semibold border border-white/[0.06] hover:border-white/20 rounded-xl transition-all cursor-pointer text-white"
           >
             <Clipboard className="h-3.5 w-3.5" />
             Copy to Clipboard
           </button>
           <button
             onClick={downloadTXT}
-            className="flex items-center gap-1.5 px-3 py-2 bg-dark-900 hover:bg-dark-800 text-xs font-semibold border border-white/5 rounded-xl transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-2 bg-dark-900 hover:bg-dark-850 text-xs font-semibold border border-white/[0.06] hover:border-white/20 rounded-xl transition-all cursor-pointer text-white"
           >
             <Download className="h-3.5 w-3.5" />
             Download TXT
           </button>
           <button
             onClick={downloadPDF}
-            className="flex items-center gap-1.5 px-3 py-2 bg-dark-900 hover:bg-dark-800 text-xs font-semibold border border-white/5 rounded-xl transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-4.5 py-2.5 bg-brand-700 hover:bg-brand-600 text-xs font-bold rounded-xl transition-all cursor-pointer text-white shadow-lg hover:shadow-brand-800/25"
           >
             <Download className="h-3.5 w-3.5" />
             Download PDF Report
           </button>
           <button
             onClick={() => window.print()}
-            className="flex items-center gap-1.5 px-3 py-2 bg-dark-900 hover:bg-dark-800 text-xs font-semibold border border-white/5 rounded-xl transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-2 bg-dark-900 hover:bg-dark-850 text-xs font-semibold border border-white/[0.06] hover:border-white/20 rounded-xl transition-all cursor-pointer text-white"
           >
             <Printer className="h-3.5 w-3.5" />
             Print
           </button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Main Analysis Report Block */}
       <div id="report-view-content" className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         {/* Core Analysis Fields (2/3 width) */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="glass-panel p-8 rounded-3xl border-white/5 space-y-6 relative overflow-hidden">
+        <motion.div variants={itemVariants} className="lg:col-span-2 space-y-6">
+          <div className="glass-panel p-8 rounded-3xl border border-white/[0.06] bg-black/30 backdrop-blur-xl shadow-xl space-y-6 relative overflow-hidden">
             
             {/* Top banner logo */}
-            <div className="flex justify-between items-start gap-4 flex-wrap border-b border-white/5 pb-5">
+            <div className="flex justify-between items-start gap-4 flex-wrap border-b border-white/[0.06] pb-5">
               <div>
-                <span className="text-[10px] font-extrabold tracking-widest text-brand-400 uppercase">Crownridge Systems Diagnostic</span>
-                <h2 className="text-2xl font-extrabold text-white mt-1">{report.projectName}</h2>
-                <p className="text-dark-400 text-xs mt-1">ID: {report.projectId} • {report.location} • Filed on {new Date(report.createdAt).toLocaleDateString()}</p>
+                <span className="text-[10px] font-extrabold tracking-widest text-brand-400 uppercase flex items-center gap-1">
+                  <Sparkles className="h-3.5 w-3.5 text-yellow-400 animate-pulse" />
+                  Crownridge Systems Diagnostics
+                </span>
+                <h2 className="text-2xl font-extrabold text-white mt-1.5">{report.projectName}</h2>
+                <p className="text-slate-400 text-xs mt-1">ID: {report.projectId} • {report.location} • Filed on {new Date(report.createdAt).toLocaleDateString()}</p>
               </div>
-              <span className={`px-3 py-1 rounded text-xs font-bold uppercase tracking-wider ${sevStyle.bg} ${sevStyle.text} ${sevStyle.border}`}>
+              <span className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider ${sevStyle.bg} ${sevStyle.text} ${sevStyle.border}`}>
                 {report.severity} Delay
               </span>
             </div>
@@ -401,17 +412,18 @@ ESTIMATED RECOVERY TIME: ${ai.estimatedRecoveryTime}
                 <FileText className="h-4 w-4 text-brand-500" />
                 Executive Summary
               </h3>
-              <p className="text-dark-200 text-sm leading-relaxed bg-dark-900/50 p-4 rounded-xl border border-white/[0.02]">
+              <p className="text-slate-200 text-sm leading-relaxed bg-slate-950/40 p-4 rounded-2xl border border-white/[0.04]">
                 {ai.executiveSummary}
               </p>
             </div>
 
             {/* Primary Cause Callout */}
-            <div className="p-5 rounded-2xl bg-brand-950/30 border border-brand-900/20 space-y-2 relative">
+            <div className="p-5 rounded-3xl bg-brand-950/20 border border-brand-900/20 space-y-2 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-brand-600/5 rounded-full filter blur-xl"></div>
               <div className="absolute top-4 right-4 text-brand-500 opacity-20"><Sparkles className="h-8 w-8" /></div>
               <h4 className="text-xs font-extrabold text-brand-400 uppercase tracking-widest">Primary Root Cause</h4>
               <p className="text-white text-base font-bold leading-snug">{ai.primaryCause}</p>
-              <div className="text-xs text-dark-300 font-semibold mt-1">Classification: <span className="text-brand-300">{ai.rootCauseClassification}</span></div>
+              <div className="text-xs text-slate-400 font-semibold mt-1">Classification: <span className="text-brand-300">{ai.rootCauseClassification}</span></div>
             </div>
 
             {/* Contributing factors lists */}
@@ -419,7 +431,7 @@ ESTIMATED RECOVERY TIME: ${ai.estimatedRecoveryTime}
               <h3 className="text-xs font-extrabold text-white uppercase tracking-widest">Contributing Factors</h3>
               <ul className="space-y-2">
                 {ai.contributingFactors.map((factor, idx) => (
-                  <li key={idx} className="text-sm text-dark-300 flex items-start gap-2.5 bg-dark-900/20 p-3 rounded-lg border border-white/5">
+                  <li key={idx} className="text-sm text-slate-300 flex items-start gap-2.5 bg-dark-900/10 p-3.5 rounded-xl border border-white/[0.04]">
                     <span className="w-1.5 h-1.5 bg-brand-500 rounded-full shrink-0 mt-2"></span>
                     <span>{factor}</span>
                   </li>
@@ -430,18 +442,18 @@ ESTIMATED RECOVERY TIME: ${ai.estimatedRecoveryTime}
             {/* Business Impact block */}
             <div className="space-y-2">
               <h3 className="text-xs font-extrabold text-white uppercase tracking-widest">Contractual & Business Impact</h3>
-              <p className="text-sm text-dark-300 leading-relaxed bg-dark-900/30 p-4 rounded-xl border border-white/5">
+              <p className="text-sm text-slate-300 leading-relaxed bg-slate-950/30 p-4 rounded-2xl border border-white/[0.04]">
                 {ai.businessImpact}
               </p>
             </div>
 
             {/* Action Recommendations Splits */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-              <div className="space-y-3 bg-emerald-950/20 p-5 rounded-2xl border border-emerald-900/20">
-                <h4 className="text-xs font-extrabold text-emerald-400 uppercase tracking-widest">Immediate Mitigations</h4>
+              <div className="space-y-3 bg-emerald-950/10 p-5 rounded-2xl border border-emerald-900/20">
+                <h4 className="text-xs font-bold text-emerald-400 uppercase tracking-widest border-b border-emerald-900/20 pb-2">Immediate Mitigations</h4>
                 <ol className="space-y-3">
                   {ai.recommendedMitigationPlan.map((mit, idx) => (
-                    <li key={idx} className="text-xs text-dark-200 flex gap-2">
+                    <li key={idx} className="text-xs text-slate-200 flex gap-2">
                       <span className="font-extrabold text-brand-400">{idx + 1}.</span>
                       <span>{mit}</span>
                     </li>
@@ -449,11 +461,11 @@ ESTIMATED RECOVERY TIME: ${ai.estimatedRecoveryTime}
                 </ol>
               </div>
 
-              <div className="space-y-3 bg-blue-950/20 p-5 rounded-2xl border border-blue-900/20">
-                <h4 className="text-xs font-extrabold text-blue-400 uppercase tracking-widest">Preventive Measures</h4>
+              <div className="space-y-3 bg-blue-950/10 p-5 rounded-2xl border border-blue-900/20">
+                <h4 className="text-xs font-bold text-blue-400 uppercase tracking-widest border-b border-blue-900/20 pb-2">Preventive Measures</h4>
                 <ol className="space-y-3">
                   {ai.preventiveMeasures.map((prev, idx) => (
-                    <li key={idx} className="text-xs text-dark-200 flex gap-2">
+                    <li key={idx} className="text-xs text-slate-200 flex gap-2">
                       <span className="font-extrabold text-blue-400">{idx + 1}.</span>
                       <span>{prev}</span>
                     </li>
@@ -462,27 +474,27 @@ ESTIMATED RECOVERY TIME: ${ai.estimatedRecoveryTime}
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Side Panel Metrics & Feedback (1/3 width) */}
-        <div className="space-y-6 print:hidden">
+        <motion.div variants={itemVariants} className="space-y-6 print:hidden">
           
           {/* Side panel KPI list */}
-          <div className="glass-panel p-6 rounded-3xl border-white/5 space-y-6">
-            <h3 className="text-sm font-bold text-white uppercase tracking-widest border-b border-white/5 pb-2">Analysis Diagnostics</h3>
+          <div className="glass-panel p-6 rounded-3xl border border-white/[0.06] bg-black/30 backdrop-blur-xl shadow-xl space-y-6">
+            <h3 className="text-sm font-bold text-white uppercase tracking-widest border-b border-white/[0.06] pb-2">Analysis Diagnostics</h3>
             
             <div className="space-y-4">
               <div>
-                <span className="text-[10px] font-bold text-dark-400 uppercase tracking-wider block">Estimated Recovery Time</span>
-                <span className="inline-flex mt-1.5 px-3 py-1.5 rounded-lg bg-dark-900 text-white font-extrabold text-sm border border-white/5">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Estimated Recovery Time</span>
+                <span className="inline-flex mt-1.5 px-3.5 py-2 rounded-xl bg-slate-950/80 text-white font-extrabold text-sm border border-white/[0.06]">
                   {ai.estimatedRecoveryTime}
                 </span>
               </div>
 
               <div>
-                <span className="text-[10px] font-bold text-dark-400 uppercase tracking-wider block">Confidence Score</span>
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Confidence Score</span>
                 <div className="flex items-center gap-3 mt-2">
-                  <div className="flex-1 bg-dark-900 rounded-full h-2.5 overflow-hidden border border-white/5">
+                  <div className="flex-1 bg-slate-950 rounded-full h-2.5 overflow-hidden border border-white/[0.06]">
                     <div 
                       className="bg-brand-500 h-full rounded-full transition-all" 
                       style={{ width: `${ai.confidenceScore}%` }}
@@ -493,8 +505,8 @@ ESTIMATED RECOVERY TIME: ${ai.estimatedRecoveryTime}
               </div>
 
               <div>
-                <span className="text-[10px] font-bold text-dark-400 uppercase tracking-wider block">Assessed Risk Level</span>
-                <span className={`inline-flex mt-1.5 px-2.5 py-1 rounded text-xs font-extrabold uppercase tracking-wide ${
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Assessed Risk Level</span>
+                <span className={`inline-flex mt-1.5 px-2.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wide ${
                   ai.riskLevel === 'Critical' || ai.riskLevel === 'High' 
                     ? 'bg-red-950 text-red-400 border border-red-900/30' 
                     : 'bg-yellow-950 text-yellow-400 border border-yellow-900/30'
@@ -506,14 +518,14 @@ ESTIMATED RECOVERY TIME: ${ai.estimatedRecoveryTime}
           </div>
 
           {/* Feedback Form Card */}
-          <div className="glass-panel p-6 rounded-3xl border-white/5 space-y-5">
-            <h3 className="text-sm font-bold text-white uppercase tracking-widest border-b border-white/5 pb-2">AI Response Quality</h3>
+          <div className="glass-panel p-6 rounded-3xl border border-white/[0.06] bg-black/30 backdrop-blur-xl shadow-xl space-y-5">
+            <h3 className="text-sm font-bold text-white uppercase tracking-widest border-b border-white/[0.06] pb-2">AI Response Quality</h3>
             
             {feedbackSubmitted ? (
               <div className="text-center py-6 space-y-2.5">
                 <CheckCircle className="h-10 w-10 text-brand-500 mx-auto" />
                 <h4 className="text-sm font-bold text-white">Feedback Submitted</h4>
-                <p className="text-xs text-dark-400 leading-relaxed">Thank you. Your comments help us optimize the root cause classification pipeline.</p>
+                <p className="text-xs text-slate-400 leading-relaxed">Thank you. Your comments help us optimize the root cause classification pipeline.</p>
                 <button 
                   onClick={() => setFeedbackSubmitted(false)}
                   className="mt-3 flex items-center gap-1 mx-auto text-xs font-semibold text-brand-400 hover:text-brand-300 cursor-pointer"
@@ -524,9 +536,8 @@ ESTIMATED RECOVERY TIME: ${ai.estimatedRecoveryTime}
             ) : (
               <form onSubmit={handleFeedbackSubmit} className="space-y-4">
                 
-                {/* Rating selection (Stars) */}
                 <div>
-                  <label className="block text-[10px] font-bold text-dark-300 uppercase tracking-wide mb-2">Rate AI accuracy (1-5 Stars)</label>
+                  <label className="block text-[10px] font-bold text-slate-400 tracking-wide mb-2">Rate AI accuracy (1-5 Stars)</label>
                   <div className="flex gap-2">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <button
@@ -538,16 +549,15 @@ ESTIMATED RECOVERY TIME: ${ai.estimatedRecoveryTime}
                         <Star className={`h-6 w-6 ${
                           star <= rating 
                             ? 'text-yellow-400 fill-yellow-400' 
-                            : 'text-dark-600 hover:text-yellow-500'
+                            : 'text-slate-600 hover:text-yellow-500'
                         }`} />
                       </button>
                     ))}
                   </div>
                 </div>
 
-                {/* Like/Dislike slider */}
                 <div>
-                  <label className="block text-[10px] font-bold text-dark-300 uppercase tracking-wide mb-2">Recommendation Sentiment</label>
+                  <label className="block text-[10px] font-bold text-slate-400 tracking-wide mb-2">Sentiment Recommendation</label>
                   <div className="flex gap-3">
                     <button
                       type="button"
@@ -555,7 +565,7 @@ ESTIMATED RECOVERY TIME: ${ai.estimatedRecoveryTime}
                       className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
                         like 
                           ? 'bg-brand-950/50 text-brand-400 border-brand-500/40' 
-                          : 'bg-dark-900 text-dark-500 border-transparent hover:text-dark-300'
+                          : 'bg-dark-900 text-slate-500 border-transparent hover:text-slate-300'
                       }`}
                     >
                       <ThumbsUp className="h-4 w-4" />
@@ -567,7 +577,7 @@ ESTIMATED RECOVERY TIME: ${ai.estimatedRecoveryTime}
                       className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
                         !like 
                           ? 'bg-red-950/50 text-red-400 border-red-500/40' 
-                          : 'bg-dark-900 text-dark-500 border-transparent hover:text-dark-300'
+                          : 'bg-dark-900 text-slate-500 border-transparent hover:text-slate-300'
                       }`}
                     >
                       <ThumbsDown className="h-4 w-4" />
@@ -576,12 +586,11 @@ ESTIMATED RECOVERY TIME: ${ai.estimatedRecoveryTime}
                   </div>
                 </div>
 
-                {/* Comment area */}
                 <div>
-                  <label className="block text-[10px] font-bold text-dark-300 uppercase tracking-wide mb-2">Remarks</label>
+                  <label className="block text-[10px] font-bold text-slate-400 tracking-wide mb-2">Remarks</label>
                   <textarea
                     rows={2.5}
-                    className="w-full px-3 py-2 rounded-xl glass-input text-xs"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-950/40 border border-white/[0.08] focus:border-brand-500/50 text-white text-xs focus:outline-none focus:ring-1"
                     placeholder="Provide details about recommended mitigations..."
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
@@ -591,16 +600,16 @@ ESTIMATED RECOVERY TIME: ${ai.estimatedRecoveryTime}
                 <button
                   type="submit"
                   disabled={feedbackLoading}
-                  className="w-full py-2.5 bg-brand-600 hover:bg-brand-500 disabled:bg-brand-850 text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
+                  className="w-full py-3 bg-brand-650 hover:bg-brand-550 disabled:bg-brand-850 text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
                 >
                   {feedbackLoading ? 'Recording Feedback...' : 'Submit Rating'}
                 </button>
               </form>
             )}
           </div>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

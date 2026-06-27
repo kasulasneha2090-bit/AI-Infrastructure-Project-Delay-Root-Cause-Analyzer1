@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { Shield, LayoutDashboard, FileSpreadsheet, History, BarChart3, LogOut, User as UserIcon, Sun, Moon } from 'lucide-react';
 import Login from './pages/Login';
@@ -10,6 +10,64 @@ import ReportDetails from './pages/ReportDetails';
 import AdminDashboard from './pages/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 import { ThemeProvider, useTheme } from './components/ThemeContext';
+
+const AmbientBackground = () => {
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let animationFrameId;
+
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    const handleResize = () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    };
+    window.addEventListener('resize', handleResize);
+
+    const particles = [];
+    for (let i = 0; i < 40; i++) {
+      particles.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        radius: Math.random() * 1.2 + 0.3,
+        vx: (Math.random() - 0.5) * 0.15,
+        vy: (Math.random() - 0.5) * 0.15,
+      });
+    }
+
+    const draw = () => {
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = 'rgba(99, 102, 241, 0.12)';
+      particles.forEach((p) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0) p.x = width;
+        if (p.x > width) p.x = 0;
+        if (p.y < 0) p.y = height;
+        if (p.y > height) p.y = 0;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      animationFrameId = requestAnimationFrame(draw);
+    };
+    draw();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
+
+  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none z-0 opacity-30" />;
+};
+
 
 // Fixed Left Sidebar Navigation component
 const Sidebar = ({ user, handleLogout }) => {
@@ -189,12 +247,13 @@ function AppContent() {
   // Authenticated layout (Sidebar + main layout)
   return (
     <Router>
-      <div className="min-h-screen bg-dark-950 flex">
+      <div className="min-h-screen bg-dark-950 flex relative overflow-hidden">
+        <AmbientBackground />
         {/* Left Sidebar */}
         <Sidebar user={user} handleLogout={handleLogout} />
 
         {/* Main Content Area */}
-        <div className="flex-1 pl-[260px] min-h-screen flex flex-col justify-between bg-dark-950">
+        <div className="flex-1 pl-[260px] min-h-screen flex flex-col justify-between bg-dark-950 relative z-10">
           <div className="p-6 md:p-8 max-w-6xl mx-auto w-full">
             <Routes>
               {/* Protected Core Routes */}

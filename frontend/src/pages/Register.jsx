@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Shield, KeyRound, Mail, User as UserIcon, AlertCircle, CheckCircle, ArrowLeft } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Shield, KeyRound, Mail, User as UserIcon, AlertCircle, CheckCircle, ArrowLeft, Sparkles } from 'lucide-react';
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -41,12 +42,16 @@ const Register = () => {
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <motion.div 
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="space-y-6"
+    >
       {/* Header with back button */}
       <div className="flex items-center gap-4">
         <button
           onClick={() => navigate('/admin')}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold bg-dark-800 text-dark-300 border border-dark-700 hover:bg-dark-700 hover:text-dark-200 transition-all cursor-pointer"
+          className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold bg-dark-900 text-slate-400 border border-white/[0.06] hover:bg-dark-850 hover:text-white transition-all cursor-pointer"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Admin
@@ -54,52 +59,47 @@ const Register = () => {
       </div>
 
       <div className="max-w-lg mx-auto">
-        <div className="glass-panel rounded-3xl p-10 border-white/5 relative overflow-hidden">
+        <div className="glass-panel rounded-3xl p-10 border border-white/[0.06] bg-black/35 backdrop-blur-xl shadow-2xl relative overflow-hidden">
           {/* Glowing Top Ambient Effect */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-600 to-brand-400"></div>
+          <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-brand-650 to-brand-450"></div>
 
-          {/* Brand Banner */}
-          <div className="flex flex-col items-center mb-8">
-            <div className="bg-brand-600 p-3 rounded-2xl shadow-xl shadow-brand-700/25 mb-3">
-              <Shield className="h-8 w-8 text-white" />
+          <div className="flex flex-col items-center mb-8 text-center">
+            <div className="bg-brand-950/60 p-3.5 rounded-2xl border border-brand-900/30 mb-4 text-brand-400">
+              <Shield className="h-6 w-6" />
             </div>
-            <h2 className="text-2xl font-extrabold tracking-tight text-white font-sans text-center">Create User Account</h2>
-            <p className="text-dark-400 text-xs mt-1 text-center font-medium">ADMIN — SET UP NEW WORKSTATION PROFILE</p>
-          </div>
-
-          {/* Info notice */}
-          <div className="mb-6 flex items-start gap-2.5 p-3.5 rounded-xl bg-brand-950/40 border border-brand-900/30 text-brand-400 text-xs">
-            <Shield className="h-4 w-4 shrink-0 mt-0.5" />
-            <span>The user's email must already be in the <strong>Allowed Users</strong> list. Their role will be assigned automatically from that list.</span>
+            <h2 className="text-2xl font-extrabold text-white tracking-tight flex items-center gap-1">
+              Create User Account
+              <Sparkles className="h-4.5 w-4.5 text-brand-400" />
+            </h2>
+            <p className="text-slate-400 text-xs mt-1.5 leading-relaxed">
+              Register a new logins credential profile. The user's email must first be added to the whitelist in the Admin Panel.
+            </p>
           </div>
 
           {error && (
-            <div className="mb-6 flex items-start gap-2.5 p-3.5 rounded-xl bg-red-950/40 border border-red-900/30 text-red-400 text-sm">
-              <AlertCircle className="h-5 w-5 shrink-0 mt-0.5" />
+            <div className="mb-6 flex items-start gap-2.5 p-4 rounded-xl bg-red-950/40 border border-red-500/20 text-red-400 text-xs">
+              <AlertCircle className="h-4.5 w-4.5 shrink-0 mt-0.5" />
               <span>{error}</span>
             </div>
           )}
 
           {success && (
-            <div className="mb-6 flex items-start gap-2.5 p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-900/30 text-emerald-400 text-sm">
-              <CheckCircle className="h-5 w-5 shrink-0 mt-0.5" />
+            <div className="mb-6 flex items-start gap-2.5 p-4 rounded-xl bg-emerald-950/40 border border-emerald-500/20 text-emerald-400 text-xs">
+              <CheckCircle className="h-4.5 w-4.5 shrink-0 mt-0.5" />
               <span>{success}</span>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5" autoComplete="off">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-xs font-bold text-dark-300 uppercase tracking-wider mb-2">Full Name</label>
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-dark-500">
-                  <UserIcon className="h-4.5 w-4.5" />
-                </span>
+              <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Full Name</label>
+              <div className="relative group">
+                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500 group-focus-within:text-brand-400 transition-colors"><UserIcon className="h-4.5 w-4.5" /></span>
                 <input
                   type="text"
                   required
-                  autoComplete="off"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl glass-input text-sm"
-                  placeholder="John Doe"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-950/40 border border-white/[0.08] focus:border-brand-500/50 text-white text-sm focus:outline-none focus:ring-1 focus:ring-brand-500/20"
+                  placeholder="e.g. John Doe"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
@@ -107,55 +107,51 @@ const Register = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-dark-300 uppercase tracking-wider mb-2">Corporate Email</label>
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-dark-500">
-                  <Mail className="h-4.5 w-4.5" />
-                </span>
+              <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Corporate Email</label>
+              <div className="relative group">
+                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500 group-focus-within:text-brand-400 transition-colors"><Mail className="h-4.5 w-4.5" /></span>
                 <input
                   type="email"
                   required
-                  autoComplete="off"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl glass-input text-sm"
-                  placeholder="j.doe@crownridge.com"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-950/40 border border-white/[0.08] focus:border-brand-500/50 text-white text-sm focus:outline-none focus:ring-1 focus:ring-brand-500/20"
+                  placeholder="e.g. j.doe@crownridge.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
+              <p className="text-[10px] text-slate-500 mt-1.5 leading-relaxed">
+                This email must match the allowed users list database entry exactly.
+              </p>
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-dark-300 uppercase tracking-wider mb-2">Initial Password</label>
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-dark-500">
-                  <KeyRound className="h-4.5 w-4.5" />
-                </span>
+              <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Initial Password</label>
+              <div className="relative group">
+                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500 group-focus-within:text-brand-400 transition-colors"><KeyRound className="h-4.5 w-4.5" /></span>
                 <input
                   type="password"
                   required
-                  autoComplete="new-password"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl glass-input text-sm"
+                  minLength={6}
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-950/40 border border-white/[0.08] focus:border-brand-500/50 text-white text-sm focus:outline-none focus:ring-1 focus:ring-brand-500/20"
                   placeholder="Min 6 characters"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  minLength={6}
                 />
               </div>
             </div>
 
-            {/* No role dropdown — role is assigned from allowedUsers */}
-
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 px-4 bg-brand-600 hover:bg-brand-500 disabled:bg-brand-800 disabled:text-dark-400 text-white rounded-xl font-bold text-sm transition-all shadow-lg shadow-brand-700/15 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 focus:ring-offset-dark-950 cursor-pointer"
+              className="relative w-full py-3.5 px-4 bg-gradient-to-r from-brand-600 to-emerald-600 hover:from-brand-500 hover:to-emerald-500 disabled:from-brand-850 disabled:to-emerald-850 disabled:text-slate-500 text-white rounded-xl font-bold text-sm transition-all shadow-lg hover:shadow-brand-700/25 cursor-pointer overflow-hidden group"
             >
-              {loading ? 'Creating Account...' : 'Create User Account'}
+              <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+              {loading ? 'Creating Credentials Access Profile...' : 'Register Authorized User'}
             </button>
           </form>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
